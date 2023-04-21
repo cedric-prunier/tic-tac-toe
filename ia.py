@@ -12,9 +12,9 @@ def open_menugame():
     root.destroy()
 
 
-def jouerIA():
+def IA():
     global clique, count_c
-    if clique == False and count_c < 9:
+    if clique == True and count_c < 9:
         choix = False
         while choix == False:
             x = random.randint(1, 9)
@@ -82,9 +82,10 @@ def disactive_autre_bouton():
     btn9.config(state=DISABLED)
 
 
-gagne = True
 joueur1 = "X"
-joueur2 = "0"
+joueur2 = "IA"
+
+gagne = True
 
 
 def checkGagne():
@@ -176,10 +177,11 @@ label = Label(
 ).grid(row=2, column=3)
 
 
-def Button_click(b):
-    global clique, count_c
-    if b["text"] == " " and clique == True:
-        b["text"] = "X"
+def Button_click(btn):
+    global joueur1, joueur2, clique, count_c
+
+    if btn["text"] == " " and clique == True:
+        btn["text"] = joueur1
         clique = False
         count_c += 1
         checkGagne()
@@ -191,18 +193,15 @@ def Button_click(b):
             fg="#41B77F",
         ).grid(row=2, column=3, padx=15)
 
-    elif b["text"] == " " and clique == False:
-        b["text"] = "0"
-        clique = True
-        count_c += 1
-        checkGagne()
-        Label(
-            root,
-            text=("Au tour de " + joueur1),
-            bg="white",
-            font=("Helvetica", 30),
-            fg="#41B77F",
-        ).grid(row=2, column=3, padx=15)
+        if not gagne and not clique and count_c < 9:
+            Label(
+                root,
+                text=("Au tour de " + joueur1),
+                bg="white",
+                font=("Helvetica", 30),
+                fg="#41B77F",
+            ).grid(row=2, column=3, padx=15)
+            IA()
 
 
 def rejouer():
