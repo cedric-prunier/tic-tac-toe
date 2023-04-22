@@ -6,194 +6,87 @@ from tkmacosx import Button
 from tkinter import Label
 import subprocess
 
-
-def open_menugame():
-    subprocess.Popen(["python3", "menu.game.py"])
-    root.destroy()
-
-
-def IA():
-    global clique, count_c
-    if clique == True and count_c < 9:
-        choix = False
-        while choix == False:
-            x = random.randint(1, 9)
-            if x == 1 and btn1["text"] == " ":
-                btn1["text"] = "0"
-                choix = True
-            elif x == 2 and btn2["text"] == " ":
-                btn2["text"] = "0"
-                choix = True
-            elif x == 3 and btn3["text"] == " ":
-                btn3["text"] = "0"
-                choix = True
-            elif x == 4 and btn4["text"] == " ":
-                btn4["text"] = "0"
-                choix = True
-            elif x == 5 and btn5["text"] == " ":
-                btn5["text"] = "0"
-                choix = True
-            elif x == 6 and btn6["text"] == " ":
-                btn6["text"] = "0"
-                choix = True
-            elif x == 7 and btn7["text"] == " ":
-                btn7["text"] = "0"
-                choix = True
-            elif x == 8 and btn8["text"] == " ":
-                btn8["text"] = "0"
-                choix = True
-            elif x == 9 and btn9["text"] == " ":
-                btn9["text"] = "0"
-                choix = True
-        clique = True
-        count_c += 1
-        checkGagne()
-        Label(
-            root,
-            text=("Au tour de " + joueur1),
-            bg="white",
-            font=("Helvetica", 30),
-            fg="#41B77F",
-        ).grid(row=2, column=3, padx=15)
-
-
+# Interface graphique
 root = Tk()
 root.title("Le Morpion")
 root.config(background="#EDEDED")
 root.geometry("720x480")
+
+# Constantes
+joueur1 = "X"
+ia = "0"
+
+# Variables globales
 clique = True
 count_c = 0
+gagne = False
+
+# Les boutons du morpion
+btns = []
 
 
-def open_menugame():
-    subprocess.run(["python3", "menu.game.py"])
-    root.destroy()
-
-
-def disactive_autre_bouton():
-    btn1.config(state=DISABLED)
-    btn2.config(state=DISABLED)
-    btn3.config(state=DISABLED)
-    btn4.config(state=DISABLED)
-    btn5.config(state=DISABLED)
-    btn6.config(state=DISABLED)
-    btn7.config(state=DISABLED)
-    btn8.config(state=DISABLED)
-    btn9.config(state=DISABLED)
-
-
-joueur1 = "X"
-joueur2 = "IA"
-
-gagne = True
-
-
-def checkGagne():
+# Fonction pour vérifier si un joueur a gagné
+def check_gagne():
     global gagne
+    gagne = False
 
-    if (
-        btn1["text"] == "X"
-        and btn2["text"] == "X"
-        and btn3["text"] == "X"
-        or btn4["text"] == "X"
-        and btn5["text"] == "X"
-        and btn6["text"] == "X"
-        or btn7["text"] == "X"
-        and btn8["text"] == "X"
-        and btn9["text"] == "X"
-        or btn1["text"] == "X"
-        and btn4["text"] == "X"
-        and btn7["text"] == "X"
-        or btn2["text"] == "X"
-        and btn5["text"] == "X"
-        and btn8["text"] == "X"
-        or btn3["text"] == "X"
-        and btn6["text"] == "X"
-        and btn9["text"] == "X"
-        or btn1["text"] == "X"
-        and btn5["text"] == "X"
-        and btn9["text"] == "X"
-        or btn3["text"] == "X"
-        and btn5["text"] == "X"
-        and btn7["text"] == "X"
-    ):
-        gagne = True
-        messagebox.showinfo("Morpion", "Bravo ! le joueur X a gagné")
-        disactive_autre_bouton()
+    # Combinaisons gagnantes
+    combinaisons = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],  # Lignes
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],  # Colonnes
+        [0, 4, 8],
+        [2, 4, 6],  # Diagonales
+    ]
 
-    elif (
-        btn1["text"] == "0"
-        and btn2["text"] == "0"
-        and btn3["text"] == "0"
-        or btn4["text"] == "0"
-        and btn5["text"] == "0"
-        and btn6["text"] == "0"
-        or btn7["text"] == "0"
-        and btn8["text"] == "0"
-        and btn9["text"] == "0"
-        or btn1["text"] == "0"
-        and btn4["text"] == "0"
-        and btn7["text"] == "0"
-        or btn2["text"] == "0"
-        and btn5["text"] == "0"
-        and btn8["text"] == "0"
-        or btn3["text"] == "0"
-        and btn6["text"] == "0"
-        and btn9["text"] == "0"
-        or btn1["text"] == "0"
-        and btn5["text"] == "0"
-        and btn9["text"] == "0"
-        or btn3["text"] == "0"
-        and btn5["text"] == "0"
-        and btn7["text"] == "0"
-    ):
-        gagne = True
-        messagebox.showinfo("Morpion", "Bravo ! le joueur 0 a gagné")
-        disactive_autre_bouton()
+    for comb in combinaisons:
+        if (
+            btns[comb[0]]["text"]
+            == btns[comb[1]]["text"]
+            == btns[comb[2]]["text"]
+            == joueur1
+        ):
+            gagne = True
+            messagebox.showinfo("Morpion", "Bravo ! le joueur X a gagné")
+            desactiver_autres_boutons()
+            break
+        elif (
+            btns[comb[0]]["text"]
+            == btns[comb[1]]["text"]
+            == btns[comb[2]]["text"]
+            == ia
+        ):
+            gagne = True
+            messagebox.showinfo("Morpion", "Bravo ! le joueur 0 a gagné")
+            desactiver_autres_boutons()
+            break
 
-    elif count_c == 9 or gagne == False:
-        # mettre que 2 arguments max pour showinfo !!!!!
+    if count_c == 9 and not gagne:
         messagebox.showinfo("Perdu", "Match nul :)")
-        disactive_autre_bouton()
-    else:
-        None
+        desactiver_autres_boutons()
 
 
-label = Label(
-    root,
-    text="THE NEW GAME",
-    fg="#41B77F",
-    bg="white",
-    font=("Helvetica", 20),
-    width=23,
-).grid(row=0, column=3, pady=15, padx=40)
-
-label = Label(
-    root,
-    text=("Au tour de " + joueur1),
-    font=("Helvetica", 30),
-    bg="white",
-    fg="#41B77F",
-).grid(row=2, column=3)
+# Fonction pour désactiver les boutons non cliqués
+def desactiver_autres_boutons():
+    for btn in btns:
+        if btn["text"] == " ":
+            btn.config(state=DISABLED)
 
 
-def Button_click(btn):
-    global joueur1, joueur2, clique, count_c
+# Fonction pour le tour de l'IA
+def IA():
+    global clique, count_c
 
-    if btn["text"] == " " and clique == True:
-        btn["text"] = joueur1
-        clique = False
-        count_c += 1
-        checkGagne()
-        Label(
-            root,
-            text=("Au tour de " + joueur2),
-            bg="white",
-            font=("Helvetica", 30),
-            fg="#41B77F",
-        ).grid(row=2, column=3, padx=15)
-
-        if not gagne and not clique and count_c < 9:
+    if not clique and count_c < 9:
+        choix = True
+        while choix:
+            x = random.randint(0, 8)
+            if btns[x]["text"] == " ":
+                btns[x]["text"] = ia
+                choix = False
             Label(
                 root,
                 text=("Au tour de " + joueur1),
@@ -201,14 +94,39 @@ def Button_click(btn):
                 font=("Helvetica", 30),
                 fg="#41B77F",
             ).grid(row=2, column=3, padx=15)
-            IA()
+
+        clique = True
+        count_c += 1
+        check_gagne()
 
 
-def rejouer():
-    global btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9
+# Fonction pour gérer le clic sur un bouton
+def clic_sur_bouton(btn):
     global clique, count_c
+
+    if btn["text"] == " " and clique:
+        btn["text"] = joueur1
+        clique = False
+        count_c += 1
+        check_gagne()
+        Label(
+            root,
+            text=("Au tour de " + ia),
+            bg="white",
+            font=("Helvetica", 30),
+            fg="#41B77F",
+        ).grid(row=2, column=3, padx=15)
+
+        if not gagne and not clique and count_c < 9:
+            root.after(1000, IA)
+
+
+# Fonction pour réinitialiser le jeu
+def rejouer():
+    global clique, count_c, gagne, btns
     clique = True
     count_c = 0
+    gagne = False
     Label(
         root,
         text=("Au tour de " + joueur1),
@@ -217,99 +135,54 @@ def rejouer():
         fg="#41B77F",
     ).grid(row=2, column=3, padx=15)
 
-    btn1 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn1),
-    )
-    btn2 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn2),
-    )
-    btn3 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn3),
-    )
-    btn4 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn4),
-    )
-    btn5 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn5),
-    )
-    btn6 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn6),
-    )
-    btn7 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn7),
-    )
-    btn8 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn8),
-    )
-    btn9 = Button(
-        root,
-        text=" ",
-        font=("Courrier", 50),
-        height=120,
-        width=120,
-        bg="#7A7A7A",
-        command=lambda: Button_click(btn9),
-    )
-    btn1.grid(row=2, column=0)
-    btn2.grid(row=2, column=1)
-    btn3.grid(row=2, column=2)
+    for btn in btns:
+        btn.config(state=NORMAL, text=" ")
 
-    btn4.grid(row=3, column=0)
-    btn5.grid(row=3, column=1)
-    btn6.grid(row=3, column=2)
 
-    btn7.grid(row=4, column=0)
-    btn8.grid(row=4, column=1)
-    btn9.grid(row=4, column=2)
+# Créer les boutons
+for i in range(9):
+    btn = Button(
+        root,
+        text=" ",
+        font=("Courier", 50),
+        height=120,
+        width=120,
+        bg="#7A7A7A",
+        command=lambda x=i: clic_sur_bouton(btns[x]),
+    )
+    btns.append(btn)
 
+# Placer les boutons sur la grille
+for i in range(3):
+    for j in range(3):
+        btns[i * 3 + j].grid(row=i + 2, column=j)
+
+
+# Fonction pour ouvrir le menu principal
+def open_menugame():
+    subprocess.Popen(["python3", "menu.game.py"])
+    root.destroy()
+
+
+# Titre
+Label(
+    root,
+    text="THE NEW GAME",
+    fg="#41B77F",
+    bg="white",
+    font=("Helvetica", 20),
+    width=23,
+).grid(row=0, column=3, pady=15, padx=40)
+
+# Tour du joueur
+tour_label = Label(
+    root,
+    text=("Au tour de " + joueur1),
+    font=("Helvetica", 30),
+    bg="white",
+    fg="#41B77F",
+)
+tour_label.grid(row=2, column=3, padx=15)
 
 # bouton de fontion
 Button(root, text="Rejouer", width=10, command=rejouer).grid(
@@ -317,15 +190,13 @@ Button(root, text="Rejouer", width=10, command=rejouer).grid(
     column=3,
     padx=100,
     pady=30,
-    sticky="nsew",  # Nouvelle rangée pour le bouton "Recommencer"
+    sticky="nsew",
 )
 Button(root, text="Retour", command=open_menugame).grid(
     row=4,
     column=3,
     padx=100,
     pady=30,
-    sticky="nsew",  # Nouvelle colonne pour le bouton "Fermer"
+    sticky="nsew",
 )
-
-rejouer()
 root.mainloop()
