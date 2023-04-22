@@ -144,7 +144,7 @@ for i in range(9):
     btn = Button(
         root,
         text=" ",
-        font=("Courier", 50),
+        font=("Courrier", 50),
         height=120,
         width=120,
         bg="#7A7A7A",
